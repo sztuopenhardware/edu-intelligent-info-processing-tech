@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="深圳技术大学工程物理学院《智能信息处理技术》(EP00254) 交互式 3D 教学仿真实验平台，严格对齐课程教学大纲与教材《智能信息处理技术原理与应用》。" />
+  <title>《智能信息处理技术》交互式 3D 教学仿真实验平台 | EP00254</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <!-- ==================== 顶部固定导航栏与章节案例下拉菜单 ==================== -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-cube" aria-hidden="true">3D</div>
+        <div class="brand-titles">
+          <h1>
+            <span>《智能信息处理技术》3D 仿真实验平台</span>
+            <span class="course-code-badge">EP00254</span>
+          </h1>
+          <p class="brand-subtitle">深圳技术大学 · 工程物理学院 ｜ 教材：《智能信息处理技术原理与应用》（蒋海峰、王宝华）</p>
+        </div>
+      </div>
+
+      <!-- 核心需求：按章节进行下拉菜单式选择 -->
+      <nav class="nav-selectors" aria-label="章节与实验案例下拉选择导航">
+        <div class="selector-box">
+          <label class="selector-label" for="chapterSelect">📚 课程章节：</label>
+          <select id="chapterSelect" class="nav-select" title="按教学大纲顺序选择课程章节"></select>
+        </div>
+
+        <div class="selector-box">
+          <label class="selector-label" for="globalCaseSelect">🧪 章节案例下拉：</label>
+          <select id="globalCaseSelect" class="nav-select case-select-wide" title="按章节分组下拉选择 3D 教学仿真实验案例"></select>
+        </div>
+      </nav>
+
+      <div class="header-actions">
+        <button id="btnOpenSyllabus" class="btn" type="button">📋 18周大纲与OBE对照</button>
+        <button id="btnThemeToggle" class="btn" type="button">☀️ 浅色模式</button>
+      </div>
+    </div>
+
+    <!-- 六大章节快捷导航条 -->
+    <div id="chapterStrip" class="chapter-strip" role="navigation" aria-label="六大章节快捷切换"></div>
+  </header>
+
+  <!-- ==================== 主教学工作区 ==================== -->
+  <main class="main-container">
+    <!-- 章节导读横幅与四维教学模式切换 -->
+    <section class="chapter-hero">
+      <div class="hero-left">
+        <div class="hero-badges">
+          <span id="heroNumBadge" class="tag tag-cyan">第一章 · 第1–2周</span>
+          <span id="heroBookBadge" class="tag tag-indigo">对应教材 第1章</span>
+          <span id="heroEthicsBadge" class="tag tag-emerald">课程思政：科技创新 · 学术诚信</span>
+        </div>
+        <h2 id="heroTitle" class="hero-title">第一章：绪论</h2>
+        <p id="heroDesc" class="hero-desc"></p>
+      </div>
+
+      <div class="mode-tabs" role="tablist" aria-label="本章学习模块切换">
+        <button class="mode-tab active" data-tab="lab" type="button">🎮 3D 交互仿真实验室</button>
+        <button class="mode-tab" data-tab="walkthrough" type="button">🧮 代表性分步演算</button>
+        <button class="mode-tab" data-tab="theory" type="button">📖 核心理论与教材精讲</button>
+        <button class="mode-tab" data-tab="quiz" type="button">🎯 随堂检测 (OBE自评)</button>
+      </div>
+    </section>
+
+    <!-- ==================== 模块 1：3D 交互仿真实验室 ==================== -->
+    <section id="panel-lab" class="view-panel active" aria-label="3D交互仿真实验室">
+      <div class="lab-CaseBar">
+        <div class="lab-case-selector-wrap">
+          <label for="chapterCaseSelect" style="font-weight:700;font-size:13.5px;color:var(--accent-cyan);">
+            🔽 本章实验与专业案例下拉选择：
+          </label>
+          <select id="chapterCaseSelect" class="lab-case-select"></select>
+          <span id="caseTagBadge" class="tag tag-amber">3D 交互实验</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);">
+          专业面向：光电信息科学与工程 · 智能感知工程 · 应用物理学
+        </div>
+      </div>
+
+      <div class="lab-grid">
+        <!-- 左侧：3D WebGL/Canvas 科学视口 + 实时定量指标栏 -->
+        <div class="stage-card">
+          <div class="stage-toolbar">
+            <div class="stage-title">
+              <span>🌐</span>
+              <span id="stageCaseTitle">加载中...</span>
+            </div>
+            <div class="stage-cam-btns">
+              <button class="btn btn-sm" data-cam="iso" type="button">等轴测 3D</button>
+              <button class="btn btn-sm" data-cam="top" type="button">俯视 XY</button>
+              <button class="btn btn-sm" data-cam="front" type="button">正视 XZ</button>
+              <button class="btn btn-sm" data-cam="side" type="button">侧视 YZ</button>
+              <button id="btnAutoRotate" class="btn btn-sm" type="button">🔄 自动旋转</button>
+              <button id="btnToggleWire" class="btn btn-sm active" type="button">🕸️ 曲面网格</button>
+            </div>
+          </div>
+
+          <div class="viewport-wrap">
+            <canvas id="canvas3d"></canvas>
+            <div class="viewport-hud">
+              <div id="hudHoverInfo" class="hud-badge">
+                🖱️ 交互提示：左键拖拽旋转 3D 视角 ｜ 滚轮缩放 ｜ 右键或 Shift+拖拽平移 ｜ 悬停节点查看数值
+              </div>
+              <div id="hudLegend" class="hud-legend"></div>
+            </div>
+          </div>
+
+          <div id="metricsStrip" class="metrics-strip"></div>
+        </div>
+
+        <!-- 右侧：实验参数控制台 + 同步 2D 科学诊断曲线 + 实验原理说明 -->
+        <aside class="lab-sidebar">
+          <div class="panel-card">
+            <h3>
+              <span>🎛️ 交互实验参数调节台</span>
+              <span style="font-size:11px;color:var(--text-muted);font-weight:500;">实时驱动 3D 仿真</span>
+            </h3>
+            <div id="caseControlsContainer" class="controls-list"></div>
+          </div>
+
+          <div class="panel-card">
+            <h3>
+              <span>📈 同步二维定量分析曲线</span>
+              <span style="font-size:11px;color:var(--text-muted);font-weight:500;">收敛 / 隶属度 / 误差统计</span>
+            </h3>
+            <div class="chart2d-wrap">
+              <canvas id="canvas2d"></canvas>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h3><span>🔬 实验原理与物理/光电场景解读</span></h3>
+            <div id="caseGuideBox" class="case-guide-box"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ==================== 模块 2：大纲代表性分步演算 ==================== -->
+    <section id="panel-walkthrough" class="view-panel" aria-label="代表性分步演算">
+      <div class="panel-card" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+          <div>
+            <span class="tag tag-amber" style="margin-bottom:6px;display:inline-block;">大纲必做 · 代表性演算推导</span>
+            <h3 id="walkTitle" style="font-size:18px;border:none;padding:0;margin:4px 0;"></h3>
+            <p id="walkDesc" style="margin:0;font-size:13.5px;color:var(--text-secondary);"></p>
+          </div>
+          <div style="min-width:290px;background:var(--bg-input);padding:10px 14px;border-radius:10px;border:1px solid var(--border-strong);">
+            <div class="ctrl-header">
+              <span id="walkParamLabel">输入参数</span>
+              <span id="walkParamVal" class="ctrl-val"></span>
+            </div>
+            <input id="walkParamSlider" type="range" />
+          </div>
+        </div>
+      </div>
+
+      <div class="walkthrough-layout">
+        <div id="walkTimeline" class="step-timeline"></div>
+
+        <div class="step-detail-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <span id="walkCurrentStepNum" class="tag tag-cyan"></span>
+            <div style="display:flex;gap:8px;">
+              <button id="btnWalkPrev" class="btn btn-sm" type="button">◀ 上一步</button>
+              <button id="btnWalkNext" class="btn btn-primary btn-sm" type="button">下一步 ▶</button>
+            </div>
+          </div>
+
+          <h3 id="walkCurrentStepTitle" style="margin:8px 0 12px;font-size:18px;"></h3>
+          <div id="walkCurrentFormula" class="formula-box" style="font-size:15.5px;font-family:var(--font-mono);"></div>
+          <p id="walkCurrentDetail" style="font-size:14px;color:var(--text-secondary);line-height:1.75;"></p>
+
+          <hr style="border:none;border-top:1px solid var(--border-subtle);margin:18px 0;" />
+          <h4 style="margin:0 0 8px;font-size:13.5px;color:var(--text-muted);">📋 本题完整演算步骤一览表（随上方参数滑块实时重算）：</h4>
+          <table class="calc-table">
+            <tbody id="walkAllStepsSummary"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 模块 3：核心理论与教材精讲 ==================== -->
+    <section id="panel-theory" class="view-panel" aria-label="核心理论与教材精讲">
+      <div id="obeObjectivesBox" class="obe-grid"></div>
+      <div id="theoryCardsBox" class="theory-grid"></div>
+    </section>
+
+    <!-- ==================== 模块 4：随堂检测与 OBE 自评 ==================== -->
+    <section id="panel-quiz" class="view-panel" aria-label="章节随堂检测">
+      <div class="quiz-container">
+        <div class="panel-card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h3 style="border:none;padding:0;margin:0 0 4px;font-size:17px;">📝 章节随堂检测（支撑课程考核“随堂检测 10%” · 课程目标 CO1–CO6）</h3>
+            <div id="quizScoreReadout" style="font-size:13.5px;color:var(--accent-cyan);font-weight:700;"></div>
+          </div>
+          <button id="btnResetQuiz" class="btn" type="button">↺ 重做本章检测题</button>
+        </div>
+
+        <div id="quizListContainer" style="display:flex;flex-direction:column;gap:14px;"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== 18周教学大纲与OBE目标对照弹窗 ==================== -->
+  <div id="syllabusModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalTitle" style="margin:0;font-size:17px;">
+          📋 《智能信息处理技术 (EP00254)》OBE 课程目标与 18 周教学进度全覆盖对照表
+        </h3>
+        <button id="btnCloseSyllabus" class="btn btn-sm" type="button">✕ 关闭</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-top:0;font-size:13px;color:var(--text-secondary);">
+          <strong>章节顺序严格说明：</strong>本平台严格遵循深圳技术大学工程物理学院《智能信息处理技术》教学大纲顺序（第1章绪论 → 第2章模糊计算[教材第4章] → 第3章神经计算[教材第2章] → 第4章进化计算[教材第3章] → 第5章数据融合[教材第5章] → 第6章常见智能优化算法[教材第6章]）。
+        </p>
+
+        <h4 style="color:var(--accent-cyan);margin:14px 0 8px;">一、OBE 课程目标与毕业要求支撑关系（大纲表1 & 表5）</h4>
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th style="width:130px;">目标编号</th>
+              <th>课程目标具体内涵</th>
+              <th style="width:185px;">支撑毕业要求指标</th>
+            </tr>
+          </thead>
+          <tbody id="modalObeBody"></tbody>
+        </table>
+
+        <h4 style="color:var(--accent-cyan);margin:18px 0 8px;">二、18 教学周（36学时）课堂讲授、演示与课程思政全映射（大纲表2）</h4>
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th style="width:120px;">教学周次</th>
+              <th>主要教学内容（全部配套 3D 交互案例）</th>
+              <th style="width:105px;">教学方式</th>
+              <th style="width:105px;">思政融入点</th>
+              <th style="width:130px;">快速跳转</th>
+            </tr>
+          </thead>
+          <tbody id="modalWeekBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-bar">
+    《智能信息处理技术》(EP00254) 交互式 3D 教学仿真实验平台 · 深圳技术大学工程物理学院 ｜ 纯静态架构支持 GitHub Pages 与离线课堂直接运行
+  </footer>
+
+  <!-- 纯前端模块化脚本（兼容 GitHub Pages 子路径及本地双击离线运行） -->
+  <script defer src="./js/math-utils.js"></script>
+  <script defer src="./js/engine3d.js"></script>
+  <script defer src="./js/curriculum-data.js"></script>
+  <script defer src="./js/cases-ch1-ch2.js"></script>
+  <script defer src="./js/cases-ch3-ch4.js"></script>
+  <script defer src="./js/cases-ch5-ch6.js"></script>
+  <script defer src="./js/app.js"></script>
+</body>
+</html>
